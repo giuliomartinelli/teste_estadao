@@ -1,0 +1,56 @@
+version: '3.9'
+
+services:
+
+#Frontend  
+  app-nginx:
+    build:
+      context: .
+      dockerfile: ./app-nginx.dockerfile
+    ports:
+      - "80:80"
+    volumes:
+      - ./app/build:/usr/share/nginx/html
+      - ./app/nginx.conf:/etc/nginx/nginx.conf
+    restart: always
+  
+#Backend
+  api-node:
+    build:
+      context: .
+      dockerfile: ./api-node.dockerfile   
+    depends_on:
+      - api-database
+    ports:
+      - "3000:3000"
+    restart: always
+  
+  api-nginx:
+    build:
+      context: .
+      dockerfile: ./api-nginx.dockerfile    
+    ports:
+      - "3020:80"
+    volumes:
+      - ./api:/usr/share/nginx/html
+      - ./api/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - api-node
+    restart: always
+
+
+#Database
+  api-database:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: giuliomartinelli
+      MONGO_INITDB_ROOT_PASSWORD: nnaZYhEmNa
+      MONGO_INITDB_DATABASE: estadao
+    ports:
+      - "27017:27017"
+    volumes:
+      - api-database-mongodb:/data/db
+      - ./init-scripts:/docker-entrypoint-initdb.d
+volumes:
+    api-database-mongodb:
