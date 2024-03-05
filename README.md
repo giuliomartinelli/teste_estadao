@@ -4,7 +4,7 @@
 Execute o arquivo start.sh
 
 ```bash
-$ ./start.sh
+./start.sh
 ```
 ou execute os seguintes comandos na raiz do projeto
 
